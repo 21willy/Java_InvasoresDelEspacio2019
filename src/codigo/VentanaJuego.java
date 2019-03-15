@@ -26,6 +26,8 @@ public class VentanaJuego extends javax.swing.JFrame {
     BufferedImage buffer = null;
     
     Nave miNave = new Nave();
+    Disparo miDisparo = new Disparo();
+    Marciano miMarciano = new Marciano();
     
     Timer temporizador = new Timer(10, new ActionListener() {
         @Override
@@ -46,7 +48,7 @@ public class VentanaJuego extends javax.swing.JFrame {
         
         //inicializo la posición inicial de la nave
         miNave.x = ANCHOPANTALLA /2 - miNave.imagen.getWidth(this) /2;
-        miNave.y = ALTOPANTALLA - miNave.imagen.getHeight(this) - 55;
+        miNave.y = ALTOPANTALLA - miNave.imagen.getHeight(this) - 40;
     }
 
     private void bucleDelJuego(){
@@ -59,8 +61,12 @@ public class VentanaJuego extends javax.swing.JFrame {
         
         ///////////////////////////////////////////////////
         //redibujamos aqui cada elemento
+        g2.drawImage(miDisparo.imagen, miDisparo.x, miDisparo.y, null);
         g2.drawImage(miNave.imagen, miNave.x, miNave.y, null);
+        g2.drawImage(miMarciano.imagen1, miMarciano.x, miMarciano.y, null);
+        miDisparo.mueve();
         miNave.mueve();
+        miMarciano.mueve();
         
         
         
@@ -125,8 +131,12 @@ public class VentanaJuego extends javax.swing.JFrame {
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         switch (evt.getKeyCode()){
-            case KeyEvent.VK_LEFT: miNave.setPulsadoIzquierda(true); break ;
-            case KeyEvent.VK_RIGHT: miNave.setPulsadoDerecha(true); break;
+            case KeyEvent.VK_LEFT: miNave.setPulsadoIzquierda(true);
+            break ;
+            case KeyEvent.VK_RIGHT: miNave.setPulsadoDerecha(true);
+            break;
+            case KeyEvent.VK_SPACE: miDisparo.posicionaDisparo(miNave);
+            break;
         }
     }//GEN-LAST:event_formKeyPressed
 
