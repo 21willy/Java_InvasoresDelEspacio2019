@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author guille
+ * @author Guillermo Maroto
  */
 public class Nave {
     public Image imagen = null;
@@ -30,10 +30,10 @@ public class Nave {
     
     public void mueve(){
         if(pulsadoIzquierda && x > 0){
-            x--;
+            x-=3;
         }
         if(pulsadoDerecha && x < VentanaJuego.ANCHOPANTALLA - imagen.getWidth(null)){
-            x++;
+            x+=3;
         }
     }
 

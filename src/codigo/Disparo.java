@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 /**
  *
- * @author guill
+ * @author Guillermo Maroto
  */
 public class Disparo {
     public Image imagen = null;

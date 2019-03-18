@@ -23,11 +23,18 @@ public class VentanaJuego extends javax.swing.JFrame {
     static int ANCHOPANTALLA = 600;
     static int ALTOPANTALLA = 450;
     
+    
+    //numero de marcianos que van a aparecer
+    int filas = 5;
+    int columnas = 10;
+    
     BufferedImage buffer = null;
     
     Nave miNave = new Nave();
     Disparo miDisparo = new Disparo();
-    Marciano miMarciano = new Marciano();
+//    Marciano miMarciano = new Marciano();
+    Marciano [][] ListaMarciano = new Marciano[filas][columnas];
+    boolean direccionMarciano = false;
     
     Timer temporizador = new Timer(10, new ActionListener() {
         @Override
@@ -49,6 +56,15 @@ public class VentanaJuego extends javax.swing.JFrame {
         //inicializo la posición inicial de la nave
         miNave.x = ANCHOPANTALLA /2 - miNave.imagen.getWidth(this) /2;
         miNave.y = ALTOPANTALLA - miNave.imagen.getHeight(this) - 40;
+        
+        //inicializo el array de marcianos
+        for(int i = 0;i < filas; i++){
+            for(int j = 0; j < columnas; j++){
+                ListaMarciano [i][j] = new Marciano();
+                ListaMarciano [i][j].x = j*(15 + ListaMarciano [i][j].imagen1.getWidth(null));
+                ListaMarciano [i][j].y = i*(15 + ListaMarciano [i][j].imagen1.getHeight(null));
+            }
+        }
     }
 
     private void bucleDelJuego(){
@@ -63,10 +79,11 @@ public class VentanaJuego extends javax.swing.JFrame {
         //redibujamos aqui cada elemento
         g2.drawImage(miDisparo.imagen, miDisparo.x, miDisparo.y, null);
         g2.drawImage(miNave.imagen, miNave.x, miNave.y, null);
-        g2.drawImage(miMarciano.imagen1, miMarciano.x, miMarciano.y, null);
+//        g2.drawImage(miMarciano.imagen1, miMarciano.x, miMarciano.y, null);
+        pintaMarcianos(g2);
         miDisparo.mueve();
         miNave.mueve();
-        miMarciano.mueve();
+        
         
         
         
@@ -77,7 +94,17 @@ public class VentanaJuego extends javax.swing.JFrame {
         
         
         g2 = (Graphics2D) jPanel1.getGraphics();
-        g2.drawImage(buffer, 0, 0, null);    }
+        g2.drawImage(buffer, 0, 0, null);    
+    }
+    
+    private void pintaMarcianos(Graphics2D _g2){
+        for(int i = 0;i < filas; i++){
+            for(int j = 0; j < columnas; j++){
+                ListaMarciano [i][j].mueve();
+                _g2.drawImage(ListaMarciano[i][j].imagen1, ListaMarciano[i][j].x, ListaMarciano[i][j].y, null);
+            }
+        }
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -91,6 +118,7 @@ public class VentanaJuego extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
@@ -117,13 +145,13 @@ public class VentanaJuego extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 103, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 72, Short.MAX_VALUE))
         );
 
         pack();
