@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
  */
 public class Marciano {
      public Image imagen1, imagen2 = null;
-    public int x = 0;
+    public int x = 1;
     public int y = 0;
     private int vX = 1;
     

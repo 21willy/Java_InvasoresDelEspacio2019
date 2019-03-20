@@ -69,7 +69,7 @@ public class VentanaJuego extends javax.swing.JFrame {
                 ListaMarciano [i][j].y = i*(15 + ListaMarciano [i][j].imagen1.getHeight(null));
             }
         }
-        miDisparo.y = -1000;
+        
     }
 
     private void bucleDelJuego(){
@@ -122,6 +122,7 @@ public class VentanaJuego extends javax.swing.JFrame {
                 if(rectanguloDisparo.intersects(rectanguloMarciano)){
                     ListaMarciano[i][j].y = 2000;
                     miDisparo.y = 2000;
+                    miDisparo.disparado = false;
                     
                 }
             }
@@ -146,11 +147,14 @@ public class VentanaJuego extends javax.swing.JFrame {
                 //chequeo si el marciano ha chocado comtra la pared para cambiar la dirección
                 //de todos los marcianos
                 if(ListaMarciano[i][j].x + anchoMarciano == ANCHOPANTALLA){
-                    cambiaDireccionMarcianos();
+                    direccionMarciano = true;
+                    
                 }
-                if(ListaMarciano[i][j].x == 0){
-                    cambiaDireccionMarcianos();
+                if(ListaMarciano[i][j].x == 0 ){
+                    direccionMarciano = true;
+                   
                 }
+                
                 
                 if(contador < 50){
                     _g2.drawImage(ListaMarciano[i][j].imagen1, ListaMarciano[i][j].x, ListaMarciano[i][j].y, null);   
@@ -165,6 +169,12 @@ public class VentanaJuego extends javax.swing.JFrame {
                 }
             }
         }
+        
+        if(direccionMarciano){
+            cambiaDireccionMarcianos();
+            direccionMarciano = false;
+        }
+        
     }
     
     /**
@@ -225,6 +235,7 @@ public class VentanaJuego extends javax.swing.JFrame {
             case KeyEvent.VK_RIGHT: miNave.setPulsadoDerecha(true);
             break;
             case KeyEvent.VK_SPACE: miDisparo.posicionaDisparo(miNave);
+            miDisparo.disparado = true;
             break;
         }
     }//GEN-LAST:event_formKeyPressed
