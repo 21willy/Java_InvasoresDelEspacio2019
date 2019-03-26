@@ -6,21 +6,22 @@
 package codigo;
 
 import java.awt.Image;
-import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
 
 /**
  *
- * @author Guillermo Maroto
+ * @author guill
  */
-public class Marciano {
-    public Image imagen1, imagen2 = null;
+public class Explosion {
+   
+     public Image imagen1, imagen2 = null;
     public int x = 1;
     public int y = 0;
     private int vX = 1;
     public boolean vivo = true; 
               
-    public Marciano(){
+    public Explosion(){
        
         
     }
@@ -36,4 +37,5 @@ public class Marciano {
     public int getvX() {
         return vX;
     }
+    
 }
