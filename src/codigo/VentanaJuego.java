@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.Timer;
 
 /**
@@ -32,7 +34,7 @@ public class VentanaJuego extends javax.swing.JFrame {
     
     //numero de marcianos que van a aparecer
     int filas = 5;
-    int columnas = 10;
+    int columnas = 7;
     
     BufferedImage buffer = null;
     
@@ -41,12 +43,17 @@ public class VentanaJuego extends javax.swing.JFrame {
 //    Marciano miMarciano = new Marciano();
     Marciano [][] ListaMarciano = new Marciano[filas][columnas];
     boolean direccionMarciano = false;
+    boolean gameOver = false;
+ 
    
     //el contador sirve para decidir que imagen del marciano toca poner
     int contador = 0;
     //image para cargar el spritesheet con todos los sprites del juego
     BufferedImage plantilla = null;
     Image [][] imagenes;
+    Image [][] imagenesNave;
+    Image [][] imagenesDisparo;
+    Image muerto;
     
     
     Timer temporizador = new Timer(10, new ActionListener() {
@@ -66,15 +73,21 @@ public class VentanaJuego extends javax.swing.JFrame {
         // tercero numero de columnas
         //cuarto lo que mide de ancho cada sprite
         //quinto lo que mide de alto cada sprite
-        imagenes = cargaImagenes("/imagenes/invaders2.png", 5, 4, 64, 64, 2);
+        // sexto la escala
+        imagenes = cargaImagenes("/imagenes/Mexicano.png", 1, 2, 165, 258, 5);
+        
+        imagenesNave = cargaImagenes("/imagenes/Trump.png", 4, 6, 100, 100, 2);
+        
+        imagenesDisparo = cargaImagenes("/imagenes/muro.png", 3, 6, 203, 174, 6);
+        
         setSize(ANCHOPANTALLA, ALTOPANTALLA);
         buffer  = (BufferedImage) jPanel1.createImage(ANCHOPANTALLA, ALTOPANTALLA);
         buffer.createGraphics();
         
         temporizador.start();
         
-        miNave.imagen = imagenes[4][2];
-        miDisparo.imagen = imagenes [3][2];
+        miNave.imagen = imagenesNave[3][2];
+        miDisparo.imagen = imagenesDisparo [1][5];
         //inicializo la posición inicial de la nave
         miNave.x = ANCHOPANTALLA /2 - miNave.imagen.getWidth(this) /2;
         miNave.y = ALTOPANTALLA - miNave.imagen.getHeight(this) - 40;
@@ -86,11 +99,11 @@ public class VentanaJuego extends javax.swing.JFrame {
         //segundo fila dentro del spritesheet del marciano que quiero pintar
         //tercero columna dentro del spritesheet del marciano que quiero pintar
         
-        creaFilaMarcianos(0, 0, 2);
-        creaFilaMarcianos(1, 2, 2);
-        creaFilaMarcianos(2, 0, 2);
-        creaFilaMarcianos(3, 0, 2);
-        creaFilaMarcianos(4, 0, 2);
+        creaFilaMarcianos(0, 0, 0);
+        creaFilaMarcianos(1, 0, 0);
+        creaFilaMarcianos(2, 0, 0);
+        creaFilaMarcianos(3, 0, 0);
+        creaFilaMarcianos(4, 0, 0);
        
         
     }
@@ -104,6 +117,24 @@ public class VentanaJuego extends javax.swing.JFrame {
                 ListaMarciano [numFila][j].y = numFila*(15 + ListaMarciano [numFila][j].imagen1.getHeight(null));
             }
     }
+    
+    
+    private void reproduce (String cancion){
+           try {
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream( getClass().getResource(cancion) ));
+            clip.loop(0);
+            Thread one = new Thread() {
+                    public void run() {
+                            while(clip.getFramePosition()<clip.getFrameLength())
+                                Thread.yield();
+                             
+                    }  
+                };
+            one.start();
+        } catch (Exception e) {      
+        } 
+   }
     
     //este metod va a servir para crear el array de imagenes con todas las imagenes
     //del sprite. Devolverá un array de dos dimensiones con las imagenes colocadas
@@ -125,6 +156,15 @@ public class VentanaJuego extends javax.swing.JFrame {
         }
         return arrayImagenes;
     }
+    
+    private void finPartida (Graphics2D muerto) throws IOException{
+        try{
+            Image gameOver1 = ImageIO.read(getClass().getResource("/imagenes/gameOver.png"));
+            muerto.drawImage(gameOver1, 0, 0, ANCHOPANTALLA, ALTOPANTALLA, null);
+        }catch (IOException ex){
+            
+        }
+    }
 
 
     private void bucleDelJuego(){
@@ -132,10 +172,10 @@ public class VentanaJuego extends javax.swing.JFrame {
         // primero borro lo que hay en el buffer
         contador++;
         Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+        if(!gameOver){
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, ANCHOPANTALLA, ALTOPANTALLA);
-        
-        
+      
         ///////////////////////////////////////////////////
         //redibujamos aqui cada elemento
         g2.drawImage(miDisparo.imagen, miDisparo.x, miDisparo.y, null);
@@ -144,7 +184,14 @@ public class VentanaJuego extends javax.swing.JFrame {
         chequeaColision();
         miDisparo.mueve();
         miNave.mueve();
-        
+        }
+        else{
+            try {
+                finPartida(g2);
+            } catch (IOException ex) {
+                
+            }
+        }
         
         
         
@@ -161,11 +208,17 @@ public class VentanaJuego extends javax.swing.JFrame {
     private void chequeaColision(){
         Rectangle2D.Double rectanguloMarciano = new Rectangle2D.Double();
         Rectangle2D.Double rectanguloDisparo = new Rectangle2D.Double();
+        Rectangle2D.Double rectangulomiNave = new Rectangle2D.Double();
         
         rectanguloDisparo.setFrame(miDisparo.x,
                                            miDisparo.y,
                                            miDisparo.imagen.getWidth(null),
                                            miDisparo.imagen.getHeight(null));
+        
+        rectangulomiNave.setFrame(miNave.x,
+                                           miNave.y,
+                                           miNave.imagen.getWidth(null),
+                                           miNave.imagen.getHeight(null));
         
         for(int i = 0;i < filas; i++){
             for(int j = 0; j < columnas; j++){
@@ -180,6 +233,10 @@ public class VentanaJuego extends javax.swing.JFrame {
                     miDisparo.disparado = false;
                     
                 }
+                
+                if(rectanguloMarciano.intersects(rectangulomiNave)){
+                    gameOver = true;
+                }
             }
             }
         }
@@ -190,6 +247,7 @@ public class VentanaJuego extends javax.swing.JFrame {
     private void cambiaDireccionMarcianos (){
         for(int i = 0;i < filas; i++){
             for(int j = 0; j < columnas; j++){
+                ListaMarciano[i][j].y += 10;
                 ListaMarciano[i][j].setvX(ListaMarciano[i][j].getvX() * -1);
             }        
         }
@@ -306,6 +364,7 @@ public class VentanaJuego extends javax.swing.JFrame {
             break;
             case KeyEvent.VK_SPACE: miDisparo.posicionaDisparo(miNave);
             miDisparo.disparado = true;
+            reproduce("/sonidos/disparo.wav");
             break;
         }
     }//GEN-LAST:event_formKeyPressed
