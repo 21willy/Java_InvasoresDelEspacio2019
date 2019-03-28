@@ -8,34 +8,58 @@ package codigo;
 import java.awt.Image;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  *
  * @author guill
  */
 public class Explosion {
-   
-     public Image imagen1, imagen2 = null;
-    public int x = 1;
-    public int y = 0;
-    private int vX = 1;
-    public boolean vivo = true; 
-              
-    public Explosion(){
-       
-        
-    }
+    Clip sonidoExplosion;
+    Image imagenExplosion = null;
+    Image imagenExplosion2 = null;
     
-    public void mueve(){
-        x += vX;
+        //posición x-y de la explosion
+    private int x = 0;
+    private int y = 0;
+    private int tiempoDeVida = 50;
+
+    public int getTiempoDeVida() {
+        return tiempoDeVida;
     }
 
-    public void setvX(int vX) {
-        this.vX = vX;
+    public void setTiempoDeVida(int tiempoDeVida) {
+        this.tiempoDeVida = tiempoDeVida;
     }
 
-    public int getvX() {
-        return vX;
-    }
     
+    public Explosion (){
+        try {
+//            sonidoExplosion = AudioSystem.getClip();
+//            sonidoExplosion.open(AudioSystem.getAudioInputStream(
+//                     getClass().getResource("/sonidos/explosion.wav")));
+            imagenExplosion = ImageIO.read((getClass().getResource("/imagenes/explosion8.png")));
+            imagenExplosion2 = ImageIO.read((getClass().getResource("/imagenes/explosion11.png")));
+            
+        } catch (Exception ex) {
+        }
+
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
 }
