@@ -58,6 +58,7 @@ public class VentanaJuego extends javax.swing.JFrame {
     
     boolean direccionMarciano = false;
     boolean gameOver = false;
+    boolean ataque = false;
    
  
    
@@ -96,10 +97,8 @@ public class VentanaJuego extends javax.swing.JFrame {
         lbl_puntuacion.setText("0");
         jPanel1.add(lbl_puntuacion);
         
-        AudioClip sonido;
-        sonido = java.applet.Applet.newAudioClip(getClass().getResource("/sonidos/musica_fondo.wav"));
-        sonido.play();
-        
+        reproduce("/sonidos/musica_fondo.wav");
+
         //para cargar el archivo de imagenes:
         // primero la ruta al archivo
         // segundo numero de filas 
@@ -107,9 +106,9 @@ public class VentanaJuego extends javax.swing.JFrame {
         //cuarto lo que mide de ancho cada sprite
         //quinto lo que mide de alto cada sprite
         // sexto la escala
-        imagenes = cargaImagenes("/imagenes/androide.png", 5, 4, 96, 95, 2);
+        imagenes = cargaImagenes("/imagenes/androide.png", 5, 4, 96, 95, 1);
         
-        imagenesNave = cargaImagenes("/imagenes/dragonball.png", 1, 8, 50, 90, 1);
+        imagenesNave = cargaImagenes("/imagenes/goku.png", 1, 1, 58, 96, 1);
         
         imagenesDisparo = cargaImagenes("/imagenes/kamehameha.png", 1, 1, 59, 56, 2);
         
@@ -186,6 +185,16 @@ public class VentanaJuego extends javax.swing.JFrame {
             }
     }
     
+    private void ganaPartida (Graphics2D victoria) throws IOException{
+        
+        try{
+            Image ganador = ImageIO.read(getClass().getResource("/imagenes/win.png"));
+            victoria.drawImage(ganador, 0, 0, ANCHOPANTALLA, ALTOPANTALLA, null);
+        }catch (IOException ex){
+            
+        }
+        
+    }
     
     private void reproduce (String cancion){
            try {
@@ -239,10 +248,34 @@ public class VentanaJuego extends javax.swing.JFrame {
     }
 
     private void evolucion(){
-//        if(puntuacion > 40){
-//            miNave.imagen = imagenesNave[0][2];
-//        }
+        if(puntuacion > 46){
+            try {
+                miNave.imagen = ImageIO.read(getClass().getResource("/imagenes/goku_super_saiyan_normal.png"));
+            } catch (IOException ex) {
+                
+            }
+        }
+        if(puntuacion > 92){
+            imagenesNave = cargaImagenes("/imagenes/dragonball.png", 1, 8, 53, 95, 1);
+            miNave.imagen = imagenesNave [0][0];
+        }
     }
+    
+//    private void ataque (){
+//        
+//        if(!ataque){
+//            imagenesNave = cargaImagenes("/imagenes/goku.png", 1, 1, 58, 96, 1);
+//        }
+//        if(ataque){
+//            try {
+//            miNave.imagen  = ImageIO.read(getClass().getResource("/imagenes/goku_ataque.png"));
+//        } catch (IOException ex) {
+//            
+//        }
+//            ataque = false;
+//        }
+//    }
+    
 
     private void bucleDelJuego(){
         // gobierna el redibujado de los objetos en el jPanel1
@@ -262,10 +295,19 @@ public class VentanaJuego extends javax.swing.JFrame {
         evolucion();
         pintaExplosiones(g2);
         pintaMarcianos(g2);
+//        ataque();
         chequeaColision();
         actualizaContadorTiempo();
         miDisparo.mueve();
         miNave.mueve();
+        
+        if(puntuacion == 140){
+            try {
+                ganaPartida(g2);
+            } catch (IOException ex) {
+                
+            }
+        }
         }
         
         else{
@@ -454,6 +496,8 @@ public class VentanaJuego extends javax.swing.JFrame {
             case KeyEvent.VK_RIGHT: miNave.setPulsadoDerecha(true);
             break;
             case KeyEvent.VK_SPACE: miDisparo.posicionaDisparo(miNave);
+//            ataque = true;
+//            ataque();
             miDisparo.disparado = true;
             reproduce("/sonidos/kamehameha.wav");
             break;
